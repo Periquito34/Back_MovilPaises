@@ -1,31 +1,28 @@
-// src/middlewares/validate.js
-import { validationResult } from 'express-validator';
+const jwt = require('jsonwebtoken');
 
-/**
- * Intercepta la petición después de ejecutar las validaciones declarativas
- * en la ruta (body, param, query…).  Si hay errores responde 400 con un
- * array de { field, message }, si no continua con next().
- *
- * Uso:
- *   router.post('/pais',
- *     body('name').notEmpty(),
- *     body('iso').isLength({min:2,max:2}),
- *     validate,               // <-- aquí
- *     controllerFn
- *   );
- */
-export const validate = (req, res, next) => {
-  const errors = validationResult(req);
+const SECRET_KEY = process.env.JWT_SECRET;
 
-  if (errors.isEmpty()) {
-    return next();            // no hay errores → sigue el flujo normal
+const validateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  // Verifica que venga el header
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Token no proporcionado o malformado' });
   }
 
-  // Formateamos los errores para que el cliente los entienda
-  const formatted = errors.array().map(err => ({
-    field: err.param,
-    message: err.msg
-  }));
+  const token = authHeader.split(' ')[1];
 
-  return res.status(400).json({ errors: formatted });
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+
+    // Adjunta los datos del token a la request
+    req.user = decoded;
+
+    next(); // pasa al siguiente middleware o controlador
+  } catch (err) {
+    console.error('JWT inválido o expirado:', err.message);
+    return res.status(401).json({ message: 'Token inválido o expirado' });
+  }
 };
+
+module.exports = validateJWT;
