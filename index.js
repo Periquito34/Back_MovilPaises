@@ -13,6 +13,7 @@ const menuRoutes = require('./routes/menu.routes');
 const tagRoutes = require('./routes/tag.routes');
 const userRoutes = require('./routes/user.routes');
 const visitaRoutes = require('./routes/visita.routes');
+const authRoutes = require('./routes/auth.routes'); 
 
 const app = express();
 const PORT = process.env.PORT;
@@ -28,6 +29,7 @@ app.use('/api/menus', menuRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/visitas', visitaRoutes);
+app.use('/api/login', authRoutes); 
 
 dbConnectionMongo()
   .then(() => {

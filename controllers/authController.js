@@ -1,13 +1,16 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const AppUser = require('../models/AppUser');
+const {AppUser} = require('../models/user.model');
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+
+    console.log('AppUser:', typeof AppUser, AppUser);
+
     // Buscar usuario por email
     const user = await AppUser.findOne({ email });
     if (!user) {
@@ -15,7 +18,7 @@ exports.login = async (req, res) => {
     }
 
     // Verificar contraseña
-    const isMatch = await bcrypt.compare(password, user.password_hash);
+    const isMatch = (password === user.password_hash);
     if (!isMatch) {
       return res.status(400).json({ message: 'Contraseña incorrecta' });
     }
@@ -46,4 +49,8 @@ exports.login = async (req, res) => {
     console.error('Error en login:', error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
+};
+
+module.exports = {
+  login,
 };
