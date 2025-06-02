@@ -5,6 +5,7 @@ const {
   getAllVisitas,
   updateVisita,
   deleteVisita,
+  getVisitasByUser
 } = require('../controllers/visita.controller');
 
 const upload = require('../database/upload'); // <-- Importas la config de multer+cloudinary
@@ -20,5 +21,7 @@ router.put('/:id', updateVisita);
 
 // Eliminar visita
 router.delete('/:id', deleteVisita);
+
+router.get('/user/:userId', getVisitasByUser);
 
 module.exports = router;
