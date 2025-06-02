@@ -12,7 +12,6 @@ const SiteSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ['RESTAURANTE', 'MUSEO', 'PARQUE', 'OTRO'], // ajusta según los valores válidos de site_type_enum
     required: [true, 'El tipo de sitio es obligatorio'],
   },
   lat: {

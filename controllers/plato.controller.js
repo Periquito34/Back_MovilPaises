@@ -3,13 +3,13 @@ const { Dish, buildDish } = require('../models/plato.model');
 // Crear plato
 const createDish = async (req, res) => {
   try {
-    const { country_id, name, descripcion } = req.body;
+    const { city_id, name, descripcion } = req.body;
 
-    if (!country_id || !name) {
+    if (!city_id || !name) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    const dishData = buildDish({ country_id, name, descripcion });
+    const dishData = buildDish({ city_id, name, descripcion });
     const dish = new Dish(dishData);
     await dish.save();
 
@@ -23,7 +23,7 @@ const createDish = async (req, res) => {
 // Obtener todos los platos
 const getAllDishes = async (req, res) => {
   try {
-    const dishes = await Dish.find().populate('country_id', 'name');
+    const dishes = await Dish.find().populate('city_id', 'name');
     return res.json(dishes);
   } catch (error) {
     console.error('Error al obtener platos:', error);
@@ -35,9 +35,9 @@ const getAllDishes = async (req, res) => {
 const updateDish = async (req, res) => {
   try {
     const dishId = req.params.id;
-    const { country_id, name, descripcion } = req.body;
+    const { city_id, name, descripcion } = req.body;
 
-    const updatedData = buildDish({ country_id, name, descripcion });
+    const updatedData = buildDish({ city_id, name, descripcion });
 
     const updatedDish = await Dish.findByIdAndUpdate(dishId, updatedData, { new: true });
 
