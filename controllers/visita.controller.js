@@ -62,9 +62,30 @@ const deleteVisita = async (req, res) => {
   }
 };
 
+const getVisitasByUser = async (req, res) => {
+  const { userId } = req.params;
+  
+  try {
+    const visitas = await Visita.find({ user_id: userId })
+      .populate('user_id', 'nombre email')
+      .populate('site_id', 'name type');
+    
+    if (visitas.length === 0) {
+      return res.status(200).json({ message: 'No se encontraron visitas para este usuario', data: [] });
+    }
+    
+    res.json(visitas);
+  } catch (error) {
+    console.error('Error al obtener visitas por usuario:', error);
+    res.status(500).json({ message: 'Error al obtener las visitas del usuario', error: error.message });
+  }
+};
+
+
 module.exports = {
   createVisita,
   getAllVisitas,
   updateVisita,
   deleteVisita,
+  getVisitasByUser
 };
