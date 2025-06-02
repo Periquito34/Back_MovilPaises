@@ -7,7 +7,6 @@ const FamousSchema = new Schema({
   },
   categoria: {
     type: String,
-    enum: ['ARTISTA', 'DEPORTISTA', 'POLITICO', 'CIENTIFICO', 'OTRO'], // Ajusta según tus valores válidos de famous_cat_enum
     required: [true, 'La categoría es obligatoria'],
   },
   ciudad_nacimiento_id: {

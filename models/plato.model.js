@@ -18,7 +18,7 @@ const DishSchema = new Schema({
   timestamps: true,
 });
 
-DishSchema.index({ country_id: 1, name: 1 }, { unique: true });
+DishSchema.index({ city_id: 1, name: 1 }, { unique: true });
 
 DishSchema.methods.toJSON = function () {
   const { __v, _id, ...data } = this.toObject();
