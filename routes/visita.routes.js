@@ -7,8 +7,10 @@ const {
   deleteVisita,
 } = require('../controllers/visita.controller');
 
-// Crear visita
-router.post('/', createVisita);
+const upload = require('../database/upload'); // <-- Importas la config de multer+cloudinary
+
+// Crear visita (con imagen)
+router.post('/', upload.single('foto'), createVisita);
 
 // Obtener todas las visitas
 router.get('/', getAllVisitas);
