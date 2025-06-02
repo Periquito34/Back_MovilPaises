@@ -3,14 +3,28 @@ const { Visita, buildVisita } = require('../models/visita.model');
 // Crear nueva visita
 const createVisita = async (req, res) => {
   try {
-    const data = buildVisita(req.body);
+    // Extraer la URL de la imagen si fue subida
+    let foto_url = null;
+    if (req.file && req.file.path) {
+      foto_url = req.file.path; // Cloudinary guarda la URL pública en .path
+      console.log('Imagen subida:', foto_url);
+    }
+
+    // Construir los datos de la visita, añadiendo la URL de la imagen si existe
+    const data = buildVisita({
+      ...req.body,
+      foto_url, // se añade al objeto que se guarda
+    });
+
     const visita = new Visita(data);
     await visita.save();
     res.status(201).json(visita);
   } catch (error) {
+    console.error('Error al crear la visita:', error);
     res.status(400).json({ message: 'Error al crear la visita', error: error.message });
   }
 };
+
 
 // Obtener todas las visitas
 const getAllVisitas = async (req, res) => {
