@@ -72,9 +72,54 @@ const deleteMenuSitio = async (req, res) => {
   }
 };
 
+// Buscar sitios por ID de plato
+const findSitesByDishId = async (req, res) => {
+  try {
+    const { dishId } = req.params;
+    
+    // Validar formato de ID
+    if (!dishId || dishId.length !== 24) {
+      return res.status(400).json({ message: 'ID de plato no válido' });
+    }
+
+    // Buscar menús que contienen ese plato
+    const menus = await MenuSitio.find({ dish_id: dishId })
+      .populate({
+        path: 'site_id',
+        select: 'name type lat lng qr_code'
+      })
+      .populate({
+        path: 'dish_id',
+        select: 'name description'
+      });
+
+    if (menus.length === 0) {
+      return res.status(404).json({ 
+        message: 'No se encontraron sitios que vendan este plato' 
+      });
+    }
+
+    // Extraer información relevante
+    const dishInfo = menus[0].dish_id;
+    const sitesInfo = menus.map(menu => ({
+      site: menu.site_id,
+      precio: menu.valor_plato
+    }));
+
+    return res.json({
+      dish: dishInfo,
+      sites: sitesInfo
+    });
+  } catch (error) {
+    console.error('Error al buscar sitios por plato:', error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   createMenuSitio,
   getAllMenuSitio,
   updateMenuSitio,
   deleteMenuSitio,
+  findSitesByDishId
 };
