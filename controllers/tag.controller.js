@@ -4,11 +4,17 @@ const { Tag, buildTag } = require('../models/tag.model');
 // Crear nuevo tag
 const createTag = async (req, res) => {
   try {
+    // Extraer la URL de la imagen si fue subida
+    let foto_url = null;
+    if (req.file) {
+      foto_url = req.file.path; // Cloudinary guarda la URL pública en .path
+      console.log('Imagen subida para tag:', foto_url);
+    }
+
     const {
       user_id,
       famous_id,
       comentario,
-      foto_url,
       created_at,
       lat,
       lng,
@@ -18,10 +24,10 @@ const createTag = async (req, res) => {
       user_id,
       famous_id,
       comentario,
-      foto_url,
+      foto_url, // Se usa la URL obtenida de Cloudinary
       created_at,
-      lat,
-      lng,
+      lat: lat ? parseFloat(lat) : null,
+      lng: lng ? parseFloat(lng) : null,
     });
 
     const newTag = new Tag(tagData);
@@ -29,8 +35,8 @@ const createTag = async (req, res) => {
 
     res.status(201).json({ tag: newTag });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al crear el tag' });
+    console.error('Error al crear el tag:', error);
+    res.status(500).json({ error: 'Error al crear el tag', details: error.message });
   }
 };
 
